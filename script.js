@@ -88,6 +88,8 @@ function updateCartModal(){
     });
     cartCounter.innerHTML = cart.length;
 
+    return total;
+
 
 }
 
@@ -134,7 +136,11 @@ checkoutBtn.addEventListener("click", function(){
     const isOpen = checkRestaurantOpen();
 
     if (!isOpen) {
-        alert("RESTAURANTE FECHADO NO MOMENTO!")
+        Swal.fire({
+            title: 'Restaurante Fechado',
+            text: 'DESCULPE O TRANSTORNO, MAS O RESTAURANTE ESTÁ FECHADO NO MOMENTO!',
+            confirmButtonText: 'OK'
+        });
         return;        
     }
 
@@ -145,17 +151,20 @@ checkoutBtn.addEventListener("click", function(){
         return;
     }
 
+    //obter o valor total do carrinho
+    const total = updateCartModal();
+
     // enviar pedido para wpp
     const cartItens = cart.map((item) => {
         return(
-            ` ${item.name} Quantidade: (${item.quantity}) Preço R$ ${item.price} |`
+            ` ${item.name} Quantidade: (${item.quantity}) Preço R$ ${item.price.toFixed(2)} ||`
         )
     }).join("")
 
     const message = encodeURIComponent(cartItens)
     const phone = "+5521980243420"
 
-    window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`, "_blank")
+    window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value} Total:R$ ${total.toFixed(2)}`, "_blank")
 
     cart = [];
     updateCartModal();
